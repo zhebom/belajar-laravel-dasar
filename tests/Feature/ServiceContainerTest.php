@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Data\Bar;
 use App\Data\Foo;
 use App\Data\Person;
+use App\Services\HelloServices as ServicesHelloServices;
 use App\Services\HelloServicesIndonesia;
 use App\Services\HelloServicesKorea;
 use HelloServices;
@@ -115,8 +116,11 @@ class ServiceContainerTest extends TestCase
 
     public function testInterfaceToClass()
     {
-      $this->app->singleton(HelloServices::class, HelloServicesKorea::class);
-      $helloService = $this->app->make(HelloServices::class) ;
+     // $this->app->singleton(ServicesHelloServices::class, HelloServicesKorea::class);
+     $this->app->singleton(ServicesHelloServices::class, function ($app) {
+        return new HelloServicesKorea();
+     });
+      $helloService = $this->app->make(ServicesHelloServices::class) ;
       self::assertEquals('hallo Eko', $helloService->hello('Eko'));
     }
 }
