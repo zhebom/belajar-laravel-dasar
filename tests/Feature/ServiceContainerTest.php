@@ -5,9 +5,15 @@ namespace Tests\Feature;
 use App\Data\Bar;
 use App\Data\Foo;
 use App\Data\Person;
+use App\Services\HelloServicesIndonesia;
+use App\Services\HelloServicesKorea;
+use HelloServices;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+
+use function PHPUnit\Framework\assertEquals;
 
 class ServiceContainerTest extends TestCase
 {
@@ -87,5 +93,30 @@ class ServiceContainerTest extends TestCase
       $bar = $this->app->make(Bar::class);
 
       self::assertSame($foo, $bar->foo);
+    }
+
+
+    public function testDependencyInClosur()
+    {
+        $this->app->singleton(Foo::class, function($app){
+            return new Foo();
+        });
+        $this->app->singleton(Bar::class, function($app){
+            $foo =$app->make(Foo::class);
+            return new Bar($foo);
+        });
+      $foo = $this->app->make(Foo::class);
+      $bar2 = $this->app->make(Bar::class);
+      $bar1 = $this->app->make(Bar::class);
+
+      //self::assertSame($foo, $bar1->foo);
+      self::assertSame($bar1, $bar2);
+    }
+
+    public function testInterfaceToClass()
+    {
+      $this->app->singleton(HelloServices::class, HelloServicesKorea::class);
+      $helloService = $this->app->make(HelloServices::class) ;
+      self::assertEquals('hallo Eko', $helloService->hello('Eko'));
     }
 }
