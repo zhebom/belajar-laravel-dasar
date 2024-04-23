@@ -26,7 +26,7 @@ class ServiceContainerTest extends TestCase
 
         self::assertEquals('Foo', $foo->foo());
         self::assertEquals('Foo', $foo2->foo());
-        self::assertNotSame($foo, $foo2);
+        self::assertSame($foo, $foo2);
     }
 
     public function testBind()
@@ -82,7 +82,7 @@ class ServiceContainerTest extends TestCase
       $foo = $this->app->make(Foo::class);
       $bar = $this->app->make(Bar::class);
 
-      self::assertNotSame($foo, $bar->foo);
+      self::assertSame($foo, $bar->foo);
     }
 
     public function testDependencyInjection3()
